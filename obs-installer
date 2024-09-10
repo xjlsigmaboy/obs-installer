@@ -9,6 +9,13 @@ export magneta=$(tput setaf 5)
 export cyan=$(tput setaf 6)
 export white=$(tput setaf 7)
 export reset=$(tput sgr0)
+export error=[$(tput setaf 1)Error$(tput sgr0)]
+# variables
+export onlineinstaller=online-install.sh
+export offlineinstaller=offline-install.sh
+export entershell=exit
+export poweroff='shutdown now'
+
 # ASCII Logo
 clear
 
@@ -25,3 +32,31 @@ echo ""
 echo "$blue Github $reset : https://github.com/xjlsigmaboy "
 echo "$magneta License $reset : GPL-3 "
 echo ""
+
+# Checking permissions
+if [ "$EUID" -ne 0 ]; then
+    echo "$error This script must be run as root. Exiting."
+    exit 1
+fi
+echo "[$green*$reset] Running as root"
+
+# choosing installation type
+printf "Choose the way that you want to install Obsidian OS with it (type $green 1 $reset for online,$green 2 $reset for offline,$green 3 $reset for entering shell,$green 4 $reset for shutdown) $yellow-->$reset "
+read installation_type
+
+if [ $installation_type == "1" ]; then
+    echo "[$green*$reset] You choosed online installer"
+    bash $onlineinstaller
+elif [ $installation_type == "2" ]; then
+    echo "[$green*$reset] You choosed offline installer"
+    bash $offlineinstaller
+elif [ $installation_type == "3" ]; then
+    echo "[$green*$reset] Entering Shell"
+    $entershell
+elif [ $installation_type == "4" ]; then
+    echo "[$green*$reset] Powering off"
+    $poweroff
+else
+    echo "Enter an envalid number"
+    return;
+fi
